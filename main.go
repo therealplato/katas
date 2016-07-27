@@ -35,7 +35,6 @@ type Transform struct {
 }
 
 type State []int
-
 type TransformResult []int
 
 func main() {
@@ -45,6 +44,11 @@ func main() {
 	if scanner.Scan() {
 		state = handleFirstLine(scanner.Text())
 	}
+	chan queue Job
+	chan diffs State
+	w := &Worker{
+		input: queue,
+
 	for scanner.Scan() {
 		transform := handleLine(state, scanner.Text())
 		diff := calcTransform(state, transform)
