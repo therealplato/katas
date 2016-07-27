@@ -39,11 +39,10 @@ type Transform struct {
 // State is the full row, up to len 10e9
 type State []int
 
-var state State
-var cfg Cfg
-
 func main() {
 	defer profile.Start(profile.CPUProfile).Stop()
+	var state State
+	var cfg Cfg
 	scanner := bufio.NewScanner(os.Stdin)
 	if scanner.Scan() {
 		// create zeroed state of width M:
@@ -58,7 +57,7 @@ func main() {
 	}
 	go w.Work()
 	go setup(scanner, queue)
-	go output(diffs, cfg)
+	output(state, diffs, cfg)
 }
 
 func setup(scanner *bufio.Scanner, queue chan Job) {
@@ -72,7 +71,7 @@ func setup(scanner *bufio.Scanner, queue chan Job) {
 		panic(err)
 	}
 }
-func output(diffs chan Diff, cfg Cfg) {
+func output(state State, diffs chan Diff, cfg Cfg) {
 	for {
 		d := <-diffs
 		// diff := calcTransform(state, transform)
@@ -96,7 +95,7 @@ func handleFirstLine(s string) (State, Cfg) {
 	c.N, _ = strconv.Atoi(first[0])
 	c.M, _ = strconv.Atoi(first[1])
 	// initialize zeroed array:
-	return State(make([]int, cfg.N)), c
+	return State(make([]int, c.N)), c
 	// var i int
 	// for i = 0; i < N; i++ {
 	// 	state = append(state, 0)
@@ -120,10 +119,9 @@ func handleLine(s string) Transform {
 }
 
 func applyTransform(state State, d Diff) State {
-	fmt.Printf("t: %+v", d.t)
 	i := d.t.a - 1 // state index
 	var j int      // diff index
-	for i < d.l {
+	for j < d.l {
 		state[i] += d.s[j]
 		i++
 		j++
