@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 // async.go runs portions of the task asynchronously
 
 // Job describes a task for the worker
@@ -31,19 +29,16 @@ func (w *Worker) Work() {
 	for {
 		// wait for job:
 		in = <-w.input
-		fmt.Printf("got job: %+v\n", in)
 		if in.i+1 >= w.t.a && in.i < w.t.b {
 			w.output <- Result{
 				i: in.i,
 				k: w.t.k,
 			}
-			fmt.Println("wrote k result")
 		} else {
 			w.output <- Result{
 				i: in.i,
 				k: 0,
 			}
-			fmt.Println("wrote 0 result")
 		}
 	}
 }

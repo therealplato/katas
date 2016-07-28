@@ -41,18 +41,14 @@ func main() {
 	results := make(chan Result)
 	done := make(chan int)
 	sinks := makeSinks(cfg.M) // per-worker copies of the input channel
-	fmt.Println("made sinks")
 	go mux(queue, sinks)
-	fmt.Println("muxing")
 	makeWorkers(scanner, sinks, results)
 	go processResults(results, cfg, done)
 	for i := 0; i < cfg.N; i++ {
 		// ask all transforms how much they change this index
-		fmt.Println("job pre-queue")
 		queue <- Job{
 			i: i,
 		}
-		fmt.Println("job queued")
 	}
 	answer := <-done // blocks
 	fmt.Println(answer)
@@ -66,14 +62,12 @@ func makeSinks(m int) []chan Job {
 	return sinks
 }
 func mux(source chan Job, sinks []chan Job) {
-	fmt.Printf("muxing into %d sinks\n", len(sinks))
 	var j Job
 	for {
 		j = <-source
 		for _, sink := range sinks {
 			sink <- j
 		}
-		fmt.Println("muxing complete")
 	}
 }
 
@@ -95,15 +89,20 @@ func makeWorkers(scanner *bufio.Scanner, sinks []chan Job, results chan Result) 
 	}
 }
 func processResults(results chan Result, cfg Cfg, done chan int) {
+	var count int64
+	var expected int64 = int64(cfg.M) * int64(cfg.N)
 	var biggest int
 	state := make([]int, cfg.N)
 	for {
 		r := <-results
-		fmt.Println("got result")
+		count++
 		state[r.i] += r.k
-		fmt.Printf("  %d now %d  |", r.i, state[r.i])
 		if state[r.i] > biggest {
 			biggest = state[r.i]
+			fmt.Printf("new max: %d\n", biggest)
+		}
+		if count == expected {
+			done <- biggest
 		}
 	}
 }
