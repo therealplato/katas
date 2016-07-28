@@ -3,50 +3,37 @@ package main
 // async.go runs portions of the task asynchronously
 
 // Job describes a task for the worker
-// This job is to generate a Diff containing []int of width b-a containing values k
+// This job is to identify if an input index is within this transform's a..b
+// if  yes, return k; if no, return 0
 type Job struct {
-	t Transform
+	i int // zero index to test
 }
 
-// Diff is a fragment of a State slice affected by this transform
-type Diff struct {
-	t Transform
-	s State // not full width
-	l int
+// Result may be returned over output channel after a Job is processed
+type Result struct {
+	i int
+	k int
 }
 
 // Worker is spawned by a goroutine to help main
 type Worker struct {
+	t      Transform
 	input  <-chan Job
-	output chan<- Diff
+	output chan<- Result
 }
 
-// Work loops through input
+// Work blocks until receiving a Job on w.input channel, then returns a
+// Result iff this transform affects that Job.i
 func (w *Worker) Work() {
 	var in Job
 	for {
 		// wait for job:
 		in = <-w.input
-		// calculate how long the diff is:
-		l := in.t.b - in.t.a + 1 // a,b one indexed and inclusive
-		// make a too-big scratch pad:
-		scratch := make([]int, 2*l)
-		i := 0 // zero index left of populated
-		j := 1 // zero index after populated k's
-		z := 1 // width of this copy
-		// populate scratch with k's longer than diff:
-		scratch[0] = in.t.k
-		for j <= l {
-			copy(scratch[i+z:j+z], scratch[i:j])
-			i += z
-			j += z
-			z += z
-		}
-		// return diff:
-		w.output <- Diff{
-			s: scratch[:l],
-			t: in.t,
-			l: l,
+		if in.i+1 >= w.t.a && in.i < w.t.b {
+			w.output <- Result{
+				i: in.i,
+				k: w.t.k,
+			}
 		}
 	}
 }
