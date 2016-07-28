@@ -45,14 +45,15 @@ func main() {
 	go mux(queue, sinks)
 	fmt.Println("muxing")
 	makeWorkers(scanner, sinks, results)
+	go processResults(results, cfg, done)
 	for i := 0; i < cfg.N; i++ {
 		// ask all transforms how much they change this index
+		fmt.Println("job pre-queue")
 		queue <- Job{
 			i: i,
 		}
 		fmt.Println("job queued")
 	}
-	go processResults(results, cfg, done)
 	answer := <-done // blocks
 	fmt.Println(answer)
 }
