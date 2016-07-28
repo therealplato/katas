@@ -27,32 +27,34 @@ type Transform struct {
 	k int // amount to add this operation (up to 10^9)
 }
 
-// State represen
-type State []int
-
 var complete int
 
 func main() {
 	defer profile.Start(profile.CPUProfile).Stop()
-	var state State
 	var cfg Cfg
 	scanner := bufio.NewScanner(os.Stdin)
 	if scanner.Scan() {
-		state, cfg = handleFirstLine(scanner.Text()) // create zeroed state of width N
+		cfg = handleFirstLine(scanner.Text())
 	}
 
 	queue := make(chan Job) // input channel
 	results := make(chan Result)
+	done := make(chan int)
 	sinks := makeSinks(cfg.M) // per-worker copies of the input channel
+	fmt.Println("made sinks")
 	go mux(queue, sinks)
-	go makeWorkers(scanner, sinks, results)
-
+	fmt.Println("muxing")
+	makeWorkers(scanner, sinks, results)
 	for i := 0; i < cfg.N; i++ {
+		// ask all transforms how much they change this index
 		queue <- Job{
-			i: transform,
+			i: i,
 		}
+		fmt.Println("job queued")
 	}
-	processResults(state, results, cfg)
+	go processResults(results, cfg, done)
+	answer := <-done // blocks
+	fmt.Println(answer)
 }
 
 func makeSinks(m int) []chan Job {
@@ -63,44 +65,49 @@ func makeSinks(m int) []chan Job {
 	return sinks
 }
 func mux(source chan Job, sinks []chan Job) {
+	fmt.Printf("muxing into %d sinks\n", len(sinks))
 	var j Job
 	for {
 		j = <-source
 		for _, sink := range sinks {
 			sink <- j
 		}
+		fmt.Println("muxing complete")
 	}
 }
 
 func makeWorkers(scanner *bufio.Scanner, sinks []chan Job, results chan Result) {
 	line := 0
 	for scanner.Scan() {
-		transform := handleLine(scanner.Text())
+		txt := scanner.Text()
+		transform := handleLine(txt)
 		w := &Worker{
 			t:      transform,
 			input:  sinks[line],
 			output: results,
 		}
 		go w.Work()
+		line++
 	}
 	if err := scanner.Err(); err != nil {
 		panic(err)
 	}
 }
-func processResults(state State, diffs chan Result, cfg Cfg) {
+func processResults(results chan Result, cfg Cfg, done chan int) {
+	var biggest int
+	state := make([]int, cfg.N)
 	for {
-		_ = <-diffs
-		// diff := calcTransform(state, transform)
-		// state = applyTransform(state, d)
-		complete++
-		if complete == cfg.N {
-			break
+		r := <-results
+		fmt.Println("got result")
+		state[r.i] += r.k
+		fmt.Printf("  %d now %d  |", r.i, state[r.i])
+		if state[r.i] > biggest {
+			biggest = state[r.i]
 		}
 	}
-	fmt.Println(max(state))
 }
 
-func handleFirstLine(s string) (State, Cfg) {
+func handleFirstLine(s string) Cfg {
 	first := strings.Split(s, " ")
 	if len(first) != 2 {
 		panic("wrong len of first line")
@@ -109,8 +116,7 @@ func handleFirstLine(s string) (State, Cfg) {
 	c := Cfg{}
 	c.N, _ = strconv.Atoi(first[0])
 	c.M, _ = strconv.Atoi(first[1])
-	// initialize zeroed array:
-	return State(make([]int, c.N)), c
+	return c
 }
 
 // handleLine parses one input transformation line and updates state0
@@ -124,14 +130,4 @@ func handleLine(s string) Transform {
 		b: b,
 		k: k,
 	}
-}
-
-func max(state []int) int {
-	var tmp int
-	for _, x := range state {
-		if x > tmp {
-			tmp = x
-		}
-	}
-	return tmp
 }
