@@ -56,5 +56,8 @@ func read(scanner *bufio.Scanner, tcs chan Testcase) {
 }
 
 func solvable(tc Testcase) bool {
+	for i = tc.N; i > 2; i-- {
+
+	}
 	return false
 }
