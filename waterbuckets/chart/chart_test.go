@@ -1,15 +1,12 @@
 package chart
 
 import (
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func testFill(t *testing.T) {
-	t.Fatal("nowai")
-	log.Println("testing fill")
+func TestFill(t *testing.T) {
 	t.Run("zero holes", func(t *testing.T) {
 		t.Run("hill 0 1 0", func(t *testing.T) {
 			c := Chart{0, 1, 0}
