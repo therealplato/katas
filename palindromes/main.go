@@ -43,30 +43,54 @@ func (w win) val() []byte {
 // subWindows returns windows contained inside w and smaller than w; respecting even-ness
 func (w win) subWindows() []win {
 	var (
-		i    = w.L()
-		d    = 1
+		i    int // window width iterator
+		j    int // window origin iterator
 		wins = make([]win, 0)
 	)
 
-	if w.size() <= 1 {
-		return nil
-	}
 	if w.even {
-		d = 2
-		if w.size() <= 2 {
-			return nil
+		for i = 2; i < w.size(); i += 2 {
+			for j = w.L(); j < w.R(); j++ {
+				x := win{
+					chars: w.chars,
+					l:     j,
+					r:     j + i,
+				}
+				wins = append(wins, x)
+			}
+		}
+	} else {
+		for i = 1; i < w.size(); i += 2 {
+			for j = w.L(); j < w.R(); j++ {
+				x := win{
+					chars: w.chars,
+					l:     j,
+					r:     j + i,
+				}
+				wins = append(wins, x)
+			}
 		}
 	}
-	for i < w.R() {
-		x := win{
-			chars: w.chars,
-			even:  w.even,
-			l:     i,
-			r:     i + d,
-		}
-		wins = append(wins, x)
-		i++
-	}
+	//
+	// if w.size() <= 1 {
+	// 	return nil
+	// }
+	// if w.even {
+	// 	j = 2
+	// 	if w.size() <= 2 {
+	// 		return nil
+	// 	}
+	// }
+	// for i < w.R() {
+	// 	x := win{
+	// 		chars: w.chars,
+	// 		even:  w.even,
+	// 		l:     i,
+	// 		r:     i + j,
+	// 	}
+	// 	wins = append(wins, x)
+	// 	i++
+	// }
 	return wins
 }
 

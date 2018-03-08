@@ -99,10 +99,38 @@ func TestSubWindows(t *testing.T) {
 					l:     2,
 					r:     3,
 				},
+			},
+		},
+		testcase{
+			name: "odd window four chars",
+			in: win{
+				chars: []byte("aaaa"),
+			},
+			out: []win{
 				win{
-					chars: []byte("aaa"),
+					chars: []byte("aaaa"),
+					l:     0,
+					r:     1,
+				},
+				win{
+					chars: []byte("aaaa"),
+					l:     1,
+					r:     2,
+				},
+				win{
+					chars: []byte("aaaa"),
+					l:     2,
+					r:     3,
+				},
+				win{
+					chars: []byte("aaaa"),
 					l:     0,
 					r:     3,
+				},
+				win{
+					chars: []byte("aaaa"),
+					l:     1,
+					r:     4,
 				},
 			},
 		},
