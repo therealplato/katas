@@ -46,33 +46,34 @@ func evenSubs(w win) [][]byte {
 			w.chars[w.L():w.R()],
 		}
 	}
-	// i := w.L()
-	// for i; i < w.R(); i++ {
-	// tmp := dupe(w)
-	// subsubs := subs(tmp)
-	// 	// spaceLeft := i
-	// 	// spaceRight =
-	// }
 
 	return nil
 }
 func oddSubs(w win) [][]byte {
+	if w.even {
+		return nil
+	}
 	// L=0: center at leftmost char
-	if len(w.chars[w.L():w.R()]) == 1 {
+	if len(w.chars[w.L():w.R()]) <= 2 {
 		return [][]byte{
 			[]byte{
 				w.chars[w.L()],
 			},
 		}
 	}
-	return nil
-}
-
-func dupe(w win) win {
-	return win{
+	subsubs := make([][]byte, 0)
+	tmp := win{
 		chars: w.chars,
-		even:  w.even,
-		l:     w.l,
-		r:     w.r,
+		even:  false,
 	}
+	// slide center point from left to right:
+	for i := w.L(); i < w.R(); i++ {
+		subsubs = append(subsubs, subs(tmp)...)
+		// collapse window 1 char per side:
+		tmp.l = w.l + 1
+		tmp.r = w.r + 1
+		// spaceLeft := i
+		// spaceRight =
+	}
+	return subsubs
 }
