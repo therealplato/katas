@@ -19,29 +19,41 @@ func pal(s string) bool {
 }
 
 type win struct {
-	chars string // source
+	chars []byte // source
 	even  bool   // true: looking for even length strings
-	L     int    // 0 = leftmost
-	R     int    // 0 = rightmost
+	l     int    // 0 = leftmost
+	r     int    // 0 = rightmost
 }
 
-func subs(w win) []string {
-	// i=0: center at leftmost char
+func (w win) L() int {
+	return w.l
+}
+func (w win) R() int {
+	return len(w.chars) - w.r
+}
+
+func subs(w win) []byte {
+	subs := evenSubs(w)
+	subs = append(subs, oddSubs(w)...)
+	return subs
+}
+
+func evenSubs(w win) []byte {
 	// i=0: center between leftmost and second left char
-	// i := 0
-	// subs := evens()
-	// subs = append(subs, odds()...)
-	// for i; i < len(string); i++ {
-	// 	spaceLeft := i
-	// 	spaceRight =
+
+	if len(w.chars[w.L():w.R()]) == 2 {
+		return w.chars[w.L():w.R()]
+	}
+	// i := w.L
+	// for i; i < w.R; i++ {
+	// spaceLeft := i
+	// spaceRight =
 	// }
 	//
 	return nil
 }
-
-func evenSubs(s win) []string {
-	return nil
-}
-func oddSubs(s win) []string {
+func oddSubs(s win) []byte {
+	// i=0: center at leftmost char
+	// i := 0
 	return nil
 }

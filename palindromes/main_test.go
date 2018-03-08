@@ -29,18 +29,18 @@ func TestIsPalindrome(t *testing.T) {
 	}
 }
 
-func TestFindsSubPalindrome(t *testing.T) {
+func TestFindsSubstrings(t *testing.T) {
 
 	type testcase struct {
 		in win
-		x  []string
+		x  []byte
 	}
 	tcs := []testcase{{
 		in: win{
-			chars: "aa",
+			chars: []byte("aa"),
 			even:  true,
 		},
-		x: []string{"aa"},
+		x: []byte("aa"),
 	}}
 
 	for _, tc := range tcs {
