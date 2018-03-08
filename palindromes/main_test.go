@@ -33,18 +33,38 @@ func TestFindsSubstrings(t *testing.T) {
 
 	type testcase struct {
 		in win
-		x  []byte
+		x  [][]byte
 	}
-	tcs := []testcase{{
-		in: win{
-			chars: []byte("aa"),
-			even:  true,
+	tcs := []testcase{
+		testcase{
+			in: win{
+				chars: []byte("aa"),
+				even:  true,
+			},
+			x: [][]byte{
+				[]byte("aa"),
+			},
 		},
-		x: []byte("aa"),
-	}}
+		testcase{
+			in: win{
+				chars: []byte("abba"),
+				even:  true,
+			},
+			x: toBBB("aa", "bb", "aba", "abba"),
+		},
+	}
 
 	for _, tc := range tcs {
 		res := subs(tc.in)
 		assert.Equal(t, tc.x, res)
 	}
+}
+
+func toBBB(ss ...string) [][]byte {
+	bbb := make([][]byte, len(ss))
+	for _, s := range ss {
+		bb := []byte(s)
+		bbb = append(bbb, bb)
+	}
+	return bbb
 }

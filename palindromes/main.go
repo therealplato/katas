@@ -32,17 +32,19 @@ func (w win) R() int {
 	return len(w.chars) - w.r
 }
 
-func subs(w win) []byte {
+func subs(w win) [][]byte {
 	subs := evenSubs(w)
 	subs = append(subs, oddSubs(w)...)
 	return subs
 }
 
-func evenSubs(w win) []byte {
+func evenSubs(w win) [][]byte {
 	// i=0: center between leftmost and second left char
 
 	if len(w.chars[w.L():w.R()]) == 2 {
-		return w.chars[w.L():w.R()]
+		return [][]byte{
+			w.chars[w.L():w.R()],
+		}
 	}
 	// i := w.L
 	// for i; i < w.R; i++ {
@@ -52,7 +54,7 @@ func evenSubs(w win) []byte {
 	//
 	return nil
 }
-func oddSubs(s win) []byte {
+func oddSubs(s win) [][]byte {
 	// i=0: center at leftmost char
 	// i := 0
 	return nil
