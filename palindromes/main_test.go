@@ -134,6 +134,51 @@ func TestSubWindows(t *testing.T) {
 				},
 			},
 		},
+		testcase{
+			name: "even window five chars",
+			in: win{
+				chars: []byte("aaaaa"),
+				even:  true,
+			},
+			out: []win{
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     0,
+					r:     2,
+				},
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     1,
+					r:     3,
+				},
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     2,
+					r:     4,
+				},
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     3,
+					r:     5,
+				},
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     0,
+					r:     4,
+				},
+				win{
+					chars: []byte("aaaaa"),
+					even:  true,
+					l:     1,
+					r:     5,
+				},
+			},
+		},
 	}
 
 	for _, tc := range tcs {

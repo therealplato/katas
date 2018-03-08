@@ -50,9 +50,10 @@ func (w win) subWindows() []win {
 
 	if w.even {
 		for i = 2; i < w.size(); i += 2 {
-			for j = w.L(); j < w.R(); j++ {
+			for j = w.L(); (j + i) <= w.R(); j++ {
 				x := win{
 					chars: w.chars,
+					even:  true,
 					l:     j,
 					r:     j + i,
 				}
@@ -61,7 +62,7 @@ func (w win) subWindows() []win {
 		}
 	} else {
 		for i = 1; i < w.size(); i += 2 {
-			for j = w.L(); j < w.R(); j++ {
+			for j = w.L(); (j + i) <= w.R(); j++ {
 				x := win{
 					chars: w.chars,
 					l:     j,
@@ -71,26 +72,6 @@ func (w win) subWindows() []win {
 			}
 		}
 	}
-	//
-	// if w.size() <= 1 {
-	// 	return nil
-	// }
-	// if w.even {
-	// 	j = 2
-	// 	if w.size() <= 2 {
-	// 		return nil
-	// 	}
-	// }
-	// for i < w.R() {
-	// 	x := win{
-	// 		chars: w.chars,
-	// 		even:  w.even,
-	// 		l:     i,
-	// 		r:     i + j,
-	// 	}
-	// 	wins = append(wins, x)
-	// 	i++
-	// }
 	return wins
 }
 
