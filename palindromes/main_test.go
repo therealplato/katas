@@ -29,6 +29,28 @@ func TestIsPalindrome(t *testing.T) {
 	}
 }
 
+func TestOddSubs(t *testing.T) {
+	t.Run("one char input", func(t *testing.T) {
+		res := oddSubs(win{
+			chars: []byte("a"),
+		})
+		x := [][]byte{
+			[]byte("a"),
+		}
+		assert.Equal(t, x, res)
+	})
+
+	t.Run("two char input", func(t *testing.T) {
+		res := oddSubs(win{
+			chars: []byte("aa"),
+		})
+		x := [][]byte{
+			[]byte("a"),
+		}
+		assert.Equal(t, x, res)
+	})
+}
+
 func TestFindsSubstrings(t *testing.T) {
 
 	type testcase struct {
@@ -38,10 +60,27 @@ func TestFindsSubstrings(t *testing.T) {
 	tcs := []testcase{
 		testcase{
 			in: win{
-				chars: []byte("aa"),
-				even:  true,
+				chars: []byte("a"),
 			},
 			x: [][]byte{
+				[]byte("a"),
+			},
+		},
+		testcase{
+			in: win{
+				chars: []byte("aa"),
+			},
+			x: [][]byte{
+				[]byte("a"),
+				[]byte("aa"),
+			},
+		},
+		testcase{
+			in: win{
+				chars: []byte("aa"),
+			},
+			x: [][]byte{
+				[]byte("a"),
 				[]byte("aa"),
 			},
 		},
@@ -56,12 +95,14 @@ func TestFindsSubstrings(t *testing.T) {
 
 	for _, tc := range tcs {
 		res := subs(tc.in)
-		assert.Equal(t, tc.x, res)
+		for _, xSub := range tc.x {
+			assert.Contains(t, res, xSub, string(tc.in.chars))
+		}
 	}
 }
 
 func toBBB(ss ...string) [][]byte {
-	bbb := make([][]byte, len(ss))
+	bbb := make([][]byte, 0)
 	for _, s := range ss {
 		bb := []byte(s)
 		bbb = append(bbb, bb)
