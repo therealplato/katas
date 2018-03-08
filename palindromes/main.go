@@ -32,9 +32,42 @@ func (w win) R() int {
 	return len(w.chars) - w.r
 }
 
-func (w win) subWindows() []win {
+func (w win) size() int {
+	return w.R() - w.L()
+}
 
-	return nil
+func (w win) val() []byte {
+	return w.chars[w.L():w.R()]
+}
+
+// subWindows returns windows contained inside w and smaller than w; respecting even-ness
+func (w win) subWindows() []win {
+	var (
+		i    = w.L()
+		d    = 1
+		wins = make([]win, 0)
+	)
+
+	if w.size() <= 1 {
+		return nil
+	}
+	if w.even {
+		d = 2
+		if w.size() <= 2 {
+			return nil
+		}
+	}
+	for i < w.R() {
+		x := win{
+			chars: w.chars,
+			even:  w.even,
+			l:     i,
+			r:     i + d,
+		}
+		wins = append(wins, x)
+		i++
+	}
+	return wins
 }
 
 func subs(w win) [][]byte {
@@ -46,9 +79,9 @@ func subs(w win) [][]byte {
 func evenSubs(w win) [][]byte {
 	// L:=0: center between leftmost and second left char
 
-	if len(w.chars[w.L():w.R()]) == 2 {
+	if w.size() == 2 {
 		return [][]byte{
-			w.chars[w.L():w.R()],
+			w.val(),
 		}
 	}
 
@@ -59,7 +92,7 @@ func oddSubs(w win) [][]byte {
 		return nil
 	}
 	// L=0: center at leftmost char
-	if len(w.chars[w.L():w.R()]) <= 2 {
+	if w.size() <= 2 {
 		return [][]byte{
 			[]byte{
 				w.chars[w.L()],

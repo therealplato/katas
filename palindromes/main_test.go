@@ -64,16 +64,45 @@ func TestSubWindows(t *testing.T) {
 			name: "odd window two chars",
 			in: win{
 				chars: []byte("aa"),
-				even:  false,
 			},
 			out: []win{
 				win{
-					l: 0,
-					r: 1,
+					chars: []byte("aa"),
+					l:     0,
+					r:     1,
 				},
 				win{
-					l: 1,
-					r: 2,
+					chars: []byte("aa"),
+					l:     1,
+					r:     2,
+				},
+			},
+		},
+		testcase{
+			name: "odd window three chars",
+			in: win{
+				chars: []byte("aaa"),
+			},
+			out: []win{
+				win{
+					chars: []byte("aaa"),
+					l:     0,
+					r:     1,
+				},
+				win{
+					chars: []byte("aaa"),
+					l:     1,
+					r:     2,
+				},
+				win{
+					chars: []byte("aaa"),
+					l:     2,
+					r:     3,
+				},
+				win{
+					chars: []byte("aaa"),
+					l:     0,
+					r:     3,
 				},
 			},
 		},
@@ -82,7 +111,9 @@ func TestSubWindows(t *testing.T) {
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
 			subs := tc.in.subWindows()
-			assert.Equal(t, tc.out, subs)
+			for _, x := range tc.out {
+				assert.Contains(t, subs, x, tc.name)
+			}
 		})
 	}
 }
