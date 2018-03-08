@@ -29,6 +29,64 @@ func TestIsPalindrome(t *testing.T) {
 	}
 }
 
+func TestSubWindows(t *testing.T) {
+	type testcase struct {
+		name string
+		in   win
+		out  []win
+	}
+	tcs := []testcase{
+		testcase{
+			name: "even window one char",
+			in: win{
+				chars: []byte("a"),
+				even:  true,
+			},
+			out: nil,
+		},
+		testcase{
+			name: "odd window one char",
+			in: win{
+				chars: []byte("a"),
+				even:  false,
+			},
+			out: nil,
+		},
+		testcase{
+			name: "even window two chars",
+			in: win{
+				chars: []byte("aa"),
+				even:  true,
+			},
+			out: nil,
+		},
+		testcase{
+			name: "odd window two chars",
+			in: win{
+				chars: []byte("aa"),
+				even:  false,
+			},
+			out: []win{
+				win{
+					l: 0,
+					r: 1,
+				},
+				win{
+					l: 1,
+					r: 2,
+				},
+			},
+		},
+	}
+
+	for _, tc := range tcs {
+		t.Run(tc.name, func(t *testing.T) {
+			subs := tc.in.subWindows()
+			assert.Equal(t, tc.out, subs)
+		})
+	}
+}
+
 func TestOddSubs(t *testing.T) {
 	t.Run("one char input", func(t *testing.T) {
 		res := oddSubs(win{
@@ -50,16 +108,6 @@ func TestOddSubs(t *testing.T) {
 		assert.Equal(t, x, res)
 	})
 
-	t.Run("three char input", func(t *testing.T) {
-		res := oddSubs(win{
-			chars: []byte("aaa"),
-		})
-		x := [][]byte{
-			[]byte("a"),
-			[]byte("aaa"),
-		}
-		assert.Equal(t, x, res)
-	})
 }
 
 func TestFindsSubstrings(t *testing.T) {

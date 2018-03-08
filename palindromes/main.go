@@ -32,6 +32,11 @@ func (w win) R() int {
 	return len(w.chars) - w.r
 }
 
+func (w win) subWindows() []win {
+
+	return nil
+}
+
 func subs(w win) [][]byte {
 	subs := evenSubs(w)
 	subs = append(subs, oddSubs(w)...)
@@ -62,6 +67,9 @@ func oddSubs(w win) [][]byte {
 		}
 	}
 	subsubs := make([][]byte, 0)
+	for _, ww := range w.subWindows() {
+		subsubs = append(subsubs, subs(ww)...)
+	}
 	// tmp := win{
 	// 	chars: w.chars,
 	// 	even:  false,
