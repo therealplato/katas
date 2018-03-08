@@ -62,18 +62,18 @@ func oddSubs(w win) [][]byte {
 		}
 	}
 	subsubs := make([][]byte, 0)
-	tmp := win{
-		chars: w.chars,
-		even:  false,
-	}
-	// slide center point from left to right:
-	for i := w.L(); i < w.R(); i++ {
-		subsubs = append(subsubs, subs(tmp)...)
-		// collapse window 1 char per side:
-		tmp.l = w.l + 1
-		tmp.r = w.r + 1
-		// spaceLeft := i
-		// spaceRight =
-	}
+	// tmp := win{
+	// 	chars: w.chars,
+	// 	even:  false,
+	// }
+	// // slide center point from left to right:
+	// for i := w.L(); i < w.R(); i++ {
+	// 	subsubs = append(subsubs, subs(tmp)...)
+	// 	// collapse window 1 char per side:
+	// 	tmp.l = w.l + 1
+	// 	tmp.r = w.r + 1
+	// 	// spaceLeft := i
+	// 	// spaceRight =
+	// }
 	return subsubs
 }

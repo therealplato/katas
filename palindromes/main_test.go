@@ -49,6 +49,17 @@ func TestOddSubs(t *testing.T) {
 		}
 		assert.Equal(t, x, res)
 	})
+
+	t.Run("three char input", func(t *testing.T) {
+		res := oddSubs(win{
+			chars: []byte("aaa"),
+		})
+		x := [][]byte{
+			[]byte("a"),
+			[]byte("aaa"),
+		}
+		assert.Equal(t, x, res)
+	})
 }
 
 func TestFindsSubstrings(t *testing.T) {
