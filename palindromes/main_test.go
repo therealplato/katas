@@ -215,6 +215,7 @@ func TestOddSubs(t *testing.T) {
 }
 
 func TestFindsSubstrings(t *testing.T) {
+	t.Skipf("spammy and not fully implemented")
 
 	type testcase struct {
 		in win

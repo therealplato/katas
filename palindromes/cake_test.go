@@ -19,7 +19,7 @@ func TestCakeFormatting(t *testing.T) {
 			j:     3,
 		}
 		actual := mid.String()
-		assert.Equal(t, "  na  ", actual)
+		assert.Equal(t, "__na__", actual)
 	})
 }
 

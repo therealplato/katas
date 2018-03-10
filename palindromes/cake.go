@@ -15,6 +15,13 @@ type layer struct {
 	down  *layer
 }
 
+func (l *layer) push(top *layer) {
+	if l != nil {
+		l.up = top
+		top.down = l
+	}
+}
+
 func (l layer) String() string {
 	bb := make([]byte, len(l.chars))
 	spaceFill(bb)
@@ -24,33 +31,23 @@ func (l layer) String() string {
 }
 
 func build(chars []byte) (bottom *layer) {
+	if len(chars) == 0 {
+		return nil
+	}
 	log.Println("building " + string(chars))
 	// we'll destructively modify slice header:
 	c := make([]byte, len(chars), len(chars))
 	copy(c, chars)
 
-	// layers[0] = bottom
+	i := 0
+	j := len(c) - 1
 	layers := make([]*layer, 0)
 
-	i := 0
-	j := len(c)
 	for i <= j {
-		c = chars[i:j]
-		j--
-		fmt.Printf("iterating layer, input: %s\n", string(c))
-		lay := &layer{
-			i:     i,
-			j:     j,
-			chars: chars,
-		}
-		i++
-		if len(layers) > 0 {
-			top := layers[len(layers)-1]
-			lay.down = top
-			top.up = lay
-		}
-		layers = append(layers, lay)
+		layers, i, j = updateLayers(layers, c, i, j)
+		fmt.Printf("layers: %v\n", layers)
 	}
+	_, _ = i, j
 	if len(layers) == 0 {
 		return nil
 	}
@@ -59,6 +56,48 @@ func build(chars []byte) (bottom *layer) {
 
 func spaceFill(bb []byte) {
 	for i := range bb {
-		bb[i] = byte(' ')
+		bb[i] = byte('_')
 	}
+}
+
+// layers: all lower layers, lowest to highest
+// chars: original input
+// i: left index of this layer
+// j: right index of this layer
+// On an asymetric layer, i.e. chars[i] != chars[j], this pushes the left character onto layers first, then the right character
+func updateLayers(layers []*layer, chars []byte, i, j int) ([]*layer, int, int) {
+	var (
+		top *layer
+	)
+	if len(layers) > 0 {
+		top = layers[len(layers)-1]
+	}
+	asymetric := chars[i] != chars[j]
+	if asymetric {
+		lay1 := &layer{
+			i:     i,
+			j:     i,
+			chars: chars,
+		}
+		lay2 := &layer{
+			i:     j,
+			j:     j,
+			chars: chars,
+		}
+		top.push(lay1)
+		lay1.push(lay2)
+		layers = append(layers, lay1)
+		layers = append(layers, lay2)
+	} else {
+		lay1 := &layer{
+			i:     i,
+			j:     j,
+			chars: chars,
+		}
+		top.push(lay1)
+		layers = append(layers, lay1)
+	}
+	i++
+	j--
+	return layers, i, j
 }
