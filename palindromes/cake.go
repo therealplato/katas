@@ -1,9 +1,5 @@
 package main
 
-import (
-	"log"
-)
-
 type cake []*layer
 
 func (c *cake) String() string {
@@ -25,6 +21,13 @@ func (c *cake) top() *layer {
 		return nil
 	}
 	return (*c)[len(*c)-1]
+}
+
+func (c *cake) copy() *cake {
+	if len(*c) == 0 {
+		return &cake{}
+	}
+	return &cake{}
 }
 
 type layer struct {
@@ -52,11 +55,15 @@ func (l layer) String() string {
 	return string(bb)
 }
 
+func (l layer) val() string {
+
+	return ""
+}
+
 func bake(chars []byte) *cake {
 	if len(chars) == 0 {
 		return nil
 	}
-	log.Println("building " + string(chars))
 	// we'll destructively modify slice header:
 	c := make([]byte, len(chars), len(chars))
 	copy(c, chars)
