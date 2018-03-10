@@ -37,8 +37,32 @@ func TestBuildsTwoLayers(t *testing.T) {
 	in := []byte("aba")
 	lay0 := build(in)
 	assert.Equal(t, lay0.chars, in)
-	assert.Equal(t, lay0.i, 0)
-	assert.Equal(t, lay0.j, 2)
+	assert.Equal(t, 0, lay0.i)
+	assert.Equal(t, 2, lay0.j)
 	assert.Nil(t, lay0.down)
 	require.NotNil(t, lay0.up)
+
+	lay1 := lay0.up
+	assert.Equal(t, lay1.chars, in)
+	assert.Equal(t, 1, lay1.i)
+	assert.Equal(t, 1, lay1.j)
+	assert.NotNil(t, lay1.down)
+	require.Nil(t, lay1.up)
+}
+
+func TestBuildsAsymetricLayers(t *testing.T) {
+	in := []byte("ab")
+	lay0 := build(in)
+	assert.Equal(t, lay0.chars, in)
+	assert.Equal(t, 0, lay0.i)
+	assert.Equal(t, 0, lay0.j)
+	assert.Nil(t, lay0.down)
+	require.NotNil(t, lay0.up)
+
+	lay1 := lay0.up
+	assert.Equal(t, lay1.chars, in)
+	assert.Equal(t, 1, lay1.i)
+	assert.Equal(t, 1, lay1.j)
+	assert.NotNil(t, lay1.down)
+	require.Nil(t, lay1.up)
 }
