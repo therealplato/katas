@@ -7,11 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCakeFormatting(t *testing.T) {
-	t.Run(`formats layer "a"`, func(t *testing.T) {
-		bottom := build([]byte("a"))
-		assert.Equal(t, "a", bottom.String())
-	})
+func TestLayerFormatting(t *testing.T) {
 	t.Run(`formats layer "__na__"`, func(t *testing.T) {
 		mid := layer{
 			chars: []byte("panama"),
@@ -22,10 +18,29 @@ func TestCakeFormatting(t *testing.T) {
 		assert.Equal(t, "__na__", actual)
 	})
 }
+func TestCakeFormatting(t *testing.T) {
+	t.Run(`"a" cake`, func(t *testing.T) {
+		bottom := bake([]byte("a"))
+		assert.Equal(t, "a\n", bottom.String())
+	})
+	t.Run(`"ab" cake`, func(t *testing.T) {
+		bottom := bake([]byte("ab"))
+		assert.Equal(t, `_b
+a_
+`, bottom.String())
+	})
+	t.Run(`"aba" cake`, func(t *testing.T) {
+		bottom := bake([]byte("aba"))
+		assert.Equal(t, `_b_
+a_a
+`, bottom.String())
+	})
+}
 
 func TestBuildsOneLayer(t *testing.T) {
 	in := []byte("a")
-	lay := build(in)
+	cake := bake(in)
+	lay := cake.bottom()
 	assert.Nil(t, lay.up)
 	assert.Nil(t, lay.down)
 	assert.Equal(t, lay.chars, in)
@@ -35,7 +50,8 @@ func TestBuildsOneLayer(t *testing.T) {
 
 func TestBuildsTwoLayers(t *testing.T) {
 	in := []byte("aba")
-	lay0 := build(in)
+	cake := bake(in)
+	lay0 := cake.bottom()
 	assert.Equal(t, lay0.chars, in)
 	assert.Equal(t, 0, lay0.i)
 	assert.Equal(t, 2, lay0.j)
@@ -52,7 +68,8 @@ func TestBuildsTwoLayers(t *testing.T) {
 
 func TestBuildsAsymetricLayers(t *testing.T) {
 	in := []byte("ab")
-	lay0 := build(in)
+	cake := bake(in)
+	lay0 := cake.bottom()
 	assert.Equal(t, lay0.chars, in)
 	assert.Equal(t, 0, lay0.i)
 	assert.Equal(t, 0, lay0.j)

@@ -5,6 +5,25 @@ import (
 	"log"
 )
 
+type cake []*layer
+
+func (c *cake) String() string {
+	s := ""
+	for i := len(*c) - 1; i >= 0; i-- {
+		// fmt.Println(c)
+		fmt.Println((*c)[i])
+		s = s + (*c)[i].String() + "\n"
+	}
+	return s
+}
+
+func (c *cake) bottom() *layer {
+	if len(*c) == 0 {
+		return nil
+	}
+	return (*c)[0]
+}
+
 type layer struct {
 	i     int // left index
 	j     int // right index
@@ -30,7 +49,7 @@ func (l layer) String() string {
 	return string(bb)
 }
 
-func build(chars []byte) (bottom *layer) {
+func bake(chars []byte) cake {
 	if len(chars) == 0 {
 		return nil
 	}
@@ -51,7 +70,7 @@ func build(chars []byte) (bottom *layer) {
 	if len(layers) == 0 {
 		return nil
 	}
-	return layers[0]
+	return cake(layers)
 }
 
 func spaceFill(bb []byte) {
