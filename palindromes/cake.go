@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -10,8 +9,6 @@ type cake []*layer
 func (c *cake) String() string {
 	s := ""
 	for i := len(*c) - 1; i >= 0; i-- {
-		// fmt.Println(c)
-		fmt.Println((*c)[i])
 		s = s + (*c)[i].String() + "\n"
 	}
 	return s
@@ -22,6 +19,12 @@ func (c *cake) bottom() *layer {
 		return nil
 	}
 	return (*c)[0]
+}
+func (c *cake) top() *layer {
+	if len(*c) == 0 {
+		return nil
+	}
+	return (*c)[len(*c)-1]
 }
 
 type layer struct {
@@ -49,7 +52,7 @@ func (l layer) String() string {
 	return string(bb)
 }
 
-func bake(chars []byte) cake {
+func bake(chars []byte) *cake {
 	if len(chars) == 0 {
 		return nil
 	}
@@ -64,13 +67,13 @@ func bake(chars []byte) cake {
 
 	for i <= j {
 		layers, i, j = updateLayers(layers, c, i, j)
-		fmt.Printf("layers: %v\n", layers)
 	}
 	_, _ = i, j
 	if len(layers) == 0 {
 		return nil
 	}
-	return cake(layers)
+	ck := cake(layers)
+	return &ck
 }
 
 func spaceFill(bb []byte) {

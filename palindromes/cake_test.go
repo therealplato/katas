@@ -77,9 +77,11 @@ func TestBuildsAsymetricLayers(t *testing.T) {
 	require.NotNil(t, lay0.up)
 
 	lay1 := lay0.up
+	assert.Equal(t, lay1, cake.top())
 	assert.Equal(t, lay1.chars, in)
 	assert.Equal(t, 1, lay1.i)
 	assert.Equal(t, 1, lay1.j)
 	assert.NotNil(t, lay1.down)
 	require.Nil(t, lay1.up)
+
 }
