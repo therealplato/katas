@@ -76,9 +76,10 @@ func (w win) subWindows() []win {
 }
 
 func subs(w win) [][]byte {
-	subs := evenSubs(w)
-	subs = append(subs, oddSubs(w)...)
-	return subs
+	if w.size()%2 == 0 {
+		return evenSubs(w)
+	}
+	return oddSubs(w)
 }
 
 func evenSubs(w win) [][]byte {

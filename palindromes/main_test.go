@@ -240,19 +240,9 @@ func TestFindsSubstrings(t *testing.T) {
 		},
 		testcase{
 			in: win{
-				chars: []byte("aa"),
-			},
-			x: [][]byte{
-				[]byte("a"),
-				[]byte("aa"),
-			},
-		},
-		testcase{
-			in: win{
 				chars: []byte("abba"),
-				even:  true,
 			},
-			x: toBBB("aa", "bb", "aba", "abba"),
+			x: toBBB("a", "b", "aa", "bb", "aba", "abba"),
 		},
 	}
 
