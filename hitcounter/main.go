@@ -6,6 +6,7 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -24,16 +25,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	out := counter(in, 2999999)
+	e := &endpoint{
+		counts: make(map[string]int),
+		source: in,
+	}
 
-	outfile, err := os.Create("number.png")
-	if err != nil {
-		log.Fatal(err)
+	server := &http.Server{
+		Addr:    "0.0.0.0:7777",
+		Handler: e,
 	}
-	err = png.Encode(outfile, out)
-	if err != nil {
-		log.Fatal(err)
-	}
+	server.ListenAndServe()
+
 }
 
 func num(in image.Image, digit int) image.Image {
@@ -83,6 +85,18 @@ func stack(ins ...image.Image) image.Image {
 	}
 	return dst
 }
+func row(ins ...image.Image) image.Image {
+	h := 100
+	w := 100 * len(ins)
+	dst := image.NewGray(image.Rect(0, 0, w, h)) // 0,0 .. 100,100
+
+	for i, digit := range ins {
+		sr := digit.Bounds()
+		dr := image.Rect(i*100, 0, i*100+100, 100)
+		draw.Draw(dst, dr, digit, sr.Min, draw.Src)
+	}
+	return dst
+}
 
 func counter(in image.Image, n int) image.Image {
 	digits := make([]image.Image, 0)
@@ -94,6 +108,9 @@ func counter(in image.Image, n int) image.Image {
 		}
 		digit := num(in, d)
 		digits = append(digits, digit)
+	}
+	if n%2 == 0 {
+		return row(digits...)
 	}
 	return stack(digits...)
 }
