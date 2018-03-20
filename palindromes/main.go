@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/y0ssar1an/q"
 )
 
 const A = byte('a')
@@ -13,7 +11,7 @@ const D = byte('d')
 
 func main() {
 	c := bake([]byte("abc"))
-	q.Q(c)
+	// q.Q(c)
 	fmt.Println(c)
 	// sift(c) will find palindromes available from this root
 	// Sweep the root across and sift each
