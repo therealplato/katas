@@ -1,26 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"image"
 	"image/draw"
 	"image/png"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
-	fmt.Println("vim-go")
-	src, err := os.Open("numbers.png")
+	var src bytes.Buffer
+	_, err := src.Write(baked)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	in, err := png.Decode(src)
+	in, err := png.Decode(&src)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +30,7 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:    "0.0.0.0:7777",
+		Addr:    "0.0.0.0:80",
 		Handler: e,
 	}
 	server.ListenAndServe()
